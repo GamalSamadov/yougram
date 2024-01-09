@@ -3,7 +3,7 @@ import { fetchUser } from '@/lib/actions/user.action'
 import { currentUser } from "@clerk/nextjs"
 import { redirect } from 'next/navigation'
 
-const page = async () => {
+async function Page() {
 
 	const user = await currentUser()
 
@@ -13,13 +13,13 @@ const page = async () => {
 
 	if (!userInfo?.onboarded) return redirect("/onboarding")
 
-  return (
-	<>
-		<h1 className='head-text'>New post</h1>
+	return (
+		<>
+			<h1 className='head-text'>New post</h1>
 
-		<PostNewPost userId={userInfo._id}/>
-	</>
-  )
+			<PostNewPost userId={userInfo._id} /> 
+		</>
+	)
 }
 
-export default page
+export default Page
