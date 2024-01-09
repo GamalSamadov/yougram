@@ -110,3 +110,42 @@ export async function fetchPostById(id: string) {
 		throw new Error(`Error: ${err.message}`)
 	}	
 }
+
+export async function addCommentToPost(
+	postId: string,
+	commentText: string,
+	userId: string,
+	path: string
+  ) {
+	connectToDB();
+  
+	try {
+	  // Find the original post by its ID
+	  const originalPost = await Post.findById(postId);
+  
+	  if (!originalPost) {
+		throw new Error("Post not found");
+	  }
+  
+	  // Create the new comment thread
+	  const commentPost = new Post({
+		text: commentText,
+		poster: userId,
+		parentId: postId, // Set the parentId to the original thread's ID
+	  });
+  
+	  // Save the comment thread to the database
+	  const savedCommentPost = await commentPost.save();
+  
+	  // Add the comment thread's ID to the original thread's children array
+	  originalPost.children.push(savedCommentPost._id);
+  
+	  // Save the updated original thread to the database
+	  await originalPost.save();
+  
+	  revalidatePath(path);
+	} catch (err) {
+	  	console.error("Error while adding comment:", err);
+	  	throw new Error("Unable to add comment");
+	}
+}
