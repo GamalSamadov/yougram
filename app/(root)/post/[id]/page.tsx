@@ -1,63 +1,66 @@
-import PostCard from '@/components/cards/PostCard'
+import { currentUser } from "@clerk/nextjs"
+import { redirect } from "next/navigation"
+
+import PostCard from "@/components/cards/PostCard"
 import Comment from "@/components/forms/Comment"
-import { fetchPostById } from '@/lib/actions/post.action'
-import { fetchUser } from '@/lib/actions/user.action'
-import { currentUser } from '@clerk/nextjs'
-import { redirect } from 'next/navigation'
 
-const Page = async ({ params }: { params: { id: string } }) => {
-	if (!params.id) return null
+import { fetchPostById } from "@/lib/actions/post.actions"
+import { fetchUser } from "@/lib/actions/user.actions"
 
-	const user = await currentUser()
+export const revalidate = 0;
 
-	if (!user) return null
+async function page({ params }: { params: { id: string } }) {
+  if (!params.id) return null;
 
-	const userInfo = await fetchUser(user.id)
-	if (!userInfo.onboarded) return redirect("/onboarding")
+  const user = await currentUser();
+  if (!user) return null;
 
-	const post = await fetchPostById(params.id)
-	
-	return (
-		<section className='relative'>
-			<div>
-				<PostCard 
-					key={post._id}
-					id={post._id}
-					currentUserId={user?.id || ""}
-					parentId={post.parentId}
-					content={post.text}
-					poster={post.poster}
-					community={post.community}
-					createdAt={post.createdAt}
-					comments={post.children} 
-				/>
-			</div>
+  const userInfo = await fetchUser(user.id);
+  if (!userInfo?.onboarded) redirect("/onboarding");
 
-			<div className='mt-7'>
-				<Comment 
-					postId={post.id}
-					currentUserImage={userInfo.image}
-          			currentUserId={JSON.stringify(userInfo._id)}
-				/>  
-			</div>
+  const post = await fetchPostById(params.id);
 
-			<div className='mt-10'>
-				{post.children.map((childItem: any) => (
-					<PostCard 
-						key={childItem._id}
-						id={childItem._id}
-						currentUserId={user?.id || ""}
-						parentId={childItem.parentId}
-						content={childItem.text}
-						poster={childItem.poster}
-						community={childItem.community}
-						createdAt={childItem.createdAt}
-						comments={childItem.children} 
-						isComment
-					/>
-				))}
-			</div>
-		</section>
-	)
+  return (
+    <section className='relative'>
+      <div>
+        <PostCard
+          id={post._id}
+          currentUserId={user.id}
+          parentId={post.parentId}
+          content={post.text}
+          author={post.author}
+          community={post.community}
+          createdAt={post.createdAt}
+          comments={post.children}
+        />
+      </div>
+
+      <div className='mt-7'>
+        <Comment
+          postId={params.id}
+          currentUserImg={user.imageUrl}
+          currentUserId={JSON.stringify(userInfo._id)}
+        />
+      </div>
+
+      <div className='mt-10'>
+        {post.children.map((childItem: any) => (
+          <PostCard
+            key={childItem._id}
+            id={childItem._id}
+            currentUserId={user.id}
+            parentId={childItem.parentId}
+            content={childItem.text}
+            author={childItem.author}
+            community={childItem.community}
+            createdAt={childItem.createdAt}
+            comments={childItem.children}
+            isComment
+          />
+        ))}
+      </div>
+    </section>
+  );
 }
-export default Page
+
+export default page;
