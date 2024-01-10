@@ -1,7 +1,7 @@
 "use client"
 
 import { sidebarLinks } from "@/constants"
-import { SignOutButton, SignedIn } from '@clerk/nextjs'
+import { SignOutButton, SignedIn, useAuth } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -18,12 +18,15 @@ const LeftSidebar = () => {
         { sidebarLinks.map((link) => 
           {
             const isActive = (pathname.includes(link.route) && link.route.length > 1 || pathname === link.route )
+            
+            const { userId } = useAuth();
+            if (link.route === "/profile") link.route = `${link.route}/${userId}`;
 
             return (
               <Link 
-              href={link.route}
-              key={link.label}
-              className={`leftsidebar_link ${isActive && 'bg-primary-500'}`}
+                href={link.route}
+                key={link.label}
+                className={`leftsidebar_link ${isActive && 'bg-primary-500'}`}
               >
                 <Image 
                   src={link.imgURL}
@@ -49,7 +52,7 @@ const LeftSidebar = () => {
                   width={24} 
                   height={24}
                 />
-                <p className="text-light-2 max-lg:hidden">Logout</p>
+                <p className="text-light-2 max-lg:hidden">Log out</p>
               </div>
             </SignOutButton>
           </SignedIn>
