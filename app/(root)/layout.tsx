@@ -1,20 +1,20 @@
-import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import React from "react";
+import { ClerkProvider } from "@clerk/nextjs"
+import { dark } from "@clerk/themes"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import React from "react"
 
-import Bottombar from "@/components/shared/Bottombar";
-import LeftSidebar from "@/components/shared/LeftSidebar";
-import RightSidebar from "@/components/shared/RightSidebar";
-import Topbar from "@/components/shared/Topbar";
-import "../globals.css";
+import Bottombar from "@/components/shared/Bottombar"
+import LeftSidebar from "@/components/shared/LeftSidebar"
+import RightSidebar from "@/components/shared/RightSidebar"
+import Topbar from "@/components/shared/Topbar"
+import "../globals.css"
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Posts",
-  description: "A Next.js 13 Meta Posts application",
+  title: "Yougram",
+  description: "A Next.js 13 Meta Yougram application",
 };
 
 export default function RootLayout({
